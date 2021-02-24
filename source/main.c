@@ -39,7 +39,7 @@ unsigned char countlight3 = 0;
 
 unsigned char light1 = 0;
 unsigned char light2 = 0;
-unsigned char = light3 = 0;
+unsigned char light3 = 0;
 
 void transmit_data(unsigned char data, int reg) {
     int i;
@@ -244,6 +244,7 @@ int DisplayTick(int Display_State){
 		}
 		else{
 			transmit_data(num2,2);
+		}
 		Display_State = display; break;
 		default: Display_State = display; break;	
 	}
@@ -298,7 +299,7 @@ int main(void) {
 	A0 = ~PINA & 0x01;
 	A1 = ~PINA & 0x02;
 	A2 = ~PINA & 0x04;
-	A4 = ~PINA & 0x08;
+	A3 = ~PINA & 0x08;
 
 	for(i=0; i<numTasks; i++){ //Scheduler code
 			if(tasks[i]->elapsedTime == tasks[i]->period){
