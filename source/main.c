@@ -20,8 +20,10 @@ unsigned char A1; //increment
 unsigned char go = 1;
 unsigned char go2 = 1;
 unsigned char change = 0;
+unsigned char change2 = 0;
 unsigned char system = 0; //initially off
 unsigned char num = 0x00;
+unsigned char num2 = 0x00;
 unsigned char countlight1 = 0;
 unsigned char countlight2 = 0;
 unsigned char countlight3 = 0;
@@ -167,7 +169,7 @@ int Light3Tick(int Light3_State){
 				       	num = 0x81; 
 					 }
 				else if((countlight3 == 2) || (countlight3 == 6)){ 
-					num = 0numxC3; 
+					num = 0xC3; 
 					++countlight3; }
 				else if((countlight3 == 3) || (countlight3 == 5)){ 
 					num = 0xE7; 
