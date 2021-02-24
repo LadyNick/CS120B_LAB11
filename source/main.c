@@ -17,16 +17,29 @@
 
 unsigned char A0; //decrement
 unsigned char A1; //increment
+
+unsigned char A2;
+unsigned char A3;
+
 unsigned char go = 1;
 unsigned char go2 = 1;
+
 unsigned char change = 0;
 unsigned char change2 = 0;
+
 unsigned char system = 0; //initially off
+unsigned char system2 = 0;
+
 unsigned char num = 0x00;
 unsigned char num2 = 0x00;
+
 unsigned char countlight1 = 0;
 unsigned char countlight2 = 0;
 unsigned char countlight3 = 0;
+
+unsigned char light1 = 0;
+unsigned char light2 = 0;
+unsigned char = light3 = 0;
 
 void transmit_data(unsigned char data, int reg) {
     int i;
@@ -122,12 +135,17 @@ enum Light1_States{sequence1}Light1_State;
 int Light1Tick(int Light1_State){
 	switch(Light1_State){
 		case sequence1:
-			if(go != 1){ Light1_State = sequence1; countlight1 = 0; }
+			if(go != 1){countlight1 = 0; }
 			else if((go == 1) && system){
 				if(countlight1 == 0){ num = 0xFF; countlight1 = 1; }
 				else if(countlight1 == 1){ num = 0x00; countlight1 = 0; }
-				Light1_State = sequence1;
 			}
+			if(go2 != 1){light1 = 0; }
+			else if((go2 == 1) && system2){
+				if(light1 == 0){ num2 = 0xFF; light1 = 1; }
+				else if(light1 == 1){ num2 = 0x00; light1 = 0; }
+			}
+			Light1_State = sequence1;
 			break;
 		default: Light1_State = sequence1; break;	
 	}
@@ -138,12 +156,17 @@ enum Light2_States{sequence2}Light2_State;
 int Light2Tick(int Light2_State){
 	switch(Light2_State){
 		case sequence2:
-			if(go != 2){ Light2_State = sequence2; countlight2 = 0; }
+			if(go != 2){countlight2 = 0; }
 			else if((go == 2) && system){
 				if(countlight2 == 0){ num = 0xAA; countlight2 = 1;}
 				else if(countlight2 == 1){ num = 0x55; countlight2 = 0;}
-				Light2_State = sequence2;
 			}
+			if(go2 != 2){light2 = 0; }
+			else if((go2 == 2) && system2){
+				if(light2 == 0){ num2 = 0xAA; light2 = 1;}
+				else if(light2 == 1){ num2 = 0x55; light2 = 0;}
+			}
+			Light2_State = sequence2; 
 			break;
 		default: Light2_State = sequence2; break;
 	}
@@ -154,7 +177,7 @@ enum Light3_States{sequence3}Light3_State;
 int Light3Tick(int Light3_State){
         switch(Light3_State){
 		case sequence3:
-			if(go != 3){ Light3_State = sequence3; countlight3 = 0; }
+			if(go != 3){ countlight3 = 0; }
 			else if((go == 3) && system){
 				if(countlight3 == 0){ 
 					num = 0x00; 
@@ -175,6 +198,29 @@ int Light3Tick(int Light3_State){
 					num = 0xE7; 
 					++countlight3; }
 				else if(countlight3 == 4){ num = 0xFF; ++countlight3; }
+
+        		}
+			if(go2 != 3){ light3 = 0; }
+			else if((go2 == 3) && system2){
+				if(light3 == 0){ 
+					num2 = 0x00; 
+					++light3; }
+				else if((light3 == 1) || (light3 == 7)){
+					if(light3 == 7){
+						light3 = 0;
+					}
+					else{
+						++light3;
+					}
+				       	num2 = 0x81; 
+					 }
+				else if((light3 == 2) || (light3 == 6)){ 
+					num2 = 0xC3; 
+					++light3; }
+				else if((light3 == 3) || (light3 == 5)){ 
+					num2 = 0xE7; 
+					++light3; }
+				else if(light3 == 4){ num2 = 0xFF; ++light3; }
 
         		}
 			Light3_State = sequence3; break;
