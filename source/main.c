@@ -18,6 +18,7 @@
 unsigned char A0; //decrement
 unsigned char A1; //increment
 unsigned char go = 1;
+unsigned char go2 = 1;
 unsigned char change = 0;
 unsigned char system = 0; //initially off
 unsigned char num = 0x00;
@@ -25,19 +26,29 @@ unsigned char countlight1 = 0;
 unsigned char countlight2 = 0;
 unsigned char countlight3 = 0;
 
-void transmit_data(unsigned char data) {
+void transmit_data(unsigned char data, int reg) {
     int i;
     for (i = 0; i < 8 ; ++i) {
    	 // Sets SRCLR to 1 allowing data to be set
    	 // Also clears SRCLK in preparation of sending data
-   	 PORTC = 0x08;
+	 if(reg == 1){
+	 	PORTC = 0x08;
+	 }
+	 else if( reg == 2){
+		PORTC = 0x10;
+	 }
    	 // set SER = next bit of data to be sent.
    	 PORTC |= ((data >> i) & 0x01);
    	 // set SRCLK = 1. Rising edge shifts next bit of data into the shift register
    	 PORTC |= 0x02;
     }
     // set RCLK = 1. Rising edge copies data from “Shift” register to “Storage” register
-    PORTC |= 0x04;
+    if(reg == 1){
+	PORTC |= 0x04;
+    }
+    else if(reg == 2){
+	PORTC |= 0x20;
+    }
     // clears all lines in preparation of a new transmission
     PORTC = 0x00;
 }
@@ -156,7 +167,7 @@ int Light3Tick(int Light3_State){
 				       	num = 0x81; 
 					 }
 				else if((countlight3 == 2) || (countlight3 == 6)){ 
-					num = 0xC3; 
+					num = 0numxC3; 
 					++countlight3; }
 				else if((countlight3 == 3) || (countlight3 == 5)){ 
 					num = 0xE7; 
@@ -175,11 +186,16 @@ int DisplayTick(int Display_State){
 	switch(Display_State){
 		case display:
 		if(!system){
-			transmit_data(0x00);
+			transmit_data(0x00, 1);
 		}
 		else{
-			transmit_data(num);
+			transmit_data(num,1);
 		}
+		if(!system2){
+			transmit_data(0x00, 2);
+		}
+		else{
+			transmit_data(num2,2);
 		Display_State = display; break;
 		default: Display_State = display; break;	
 	}
@@ -233,6 +249,8 @@ int main(void) {
     while(1){
 	A0 = ~PINA & 0x01;
 	A1 = ~PINA & 0x02;
+	A2 = ~PINA & 0x04;
+	A4 = ~PINA & 0x08;
 
 	for(i=0; i<numTasks; i++){ //Scheduler code
 			if(tasks[i]->elapsedTime == tasks[i]->period){
