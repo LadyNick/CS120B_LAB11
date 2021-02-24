@@ -131,6 +131,70 @@ int ButtonTick(int Button_State){
 	return Button_State;
 }
 
+enum Button2_States{wait2, inc2, dec2, both2, release2}Button2_State;
+int Button2Tick(int Button2_State){
+	switch(Button2_State){
+		case wait:
+			if(A2){
+				Button2_State = dec2;
+			}
+			else if(A3){
+				Button2_State = inc2;
+			}
+			else if(A2 && A3){
+				Button2_State = both2;
+			}
+			else{ Button2_State = wait2;}
+			break;
+		case inc2:
+			if(go2 == 3){
+				go2 = 1;
+			}
+			else{ ++go2; }
+			Button2_State = release2;
+			break;
+		case dec2:
+			if(go2 == 1){
+				go2 = 3;
+			}
+			else{ --go2; }
+			Button2_State = release2;
+			break;
+		case both2:
+			if(change2){
+				Button2_State = release2;
+			}
+			else{
+			if(system2 == 0 ){
+				system2 = 1;
+				go2 = 1;
+			}
+			else if(system2 == 1){
+				go2 = 1;
+				system2 = 0;
+			}
+			change2 = 1;
+			Button_State2 = release2;
+			}
+			break;
+		case release2:
+			if(!A2 && !A3){
+				Button2_State = wait2;
+				change2 = 0;
+			}
+			else if(A2 && A3){
+				Button2_State = both2;
+			}
+			else{
+				Button2_State = release2;
+			}
+			break;
+		default: Button2_State = wait2; break;
+	}
+	return Button2_State;
+}
+
+
 enum Light1_States{sequence1}Light1_State;
 int Light1Tick(int Light1_State){
 	switch(Light1_State){
@@ -290,6 +354,11 @@ int main(void) {
     task5.period = 1;
     task5.elapsedTime = task5.period;
     task5.TickFct = &DisplayTick;
+	
+    task6.state = start;
+    task6.period = 50;
+    task6.elapsedTime = task6.period;
+    task6.TickFct = &Button2Tick;
 
     TimerSet(1); //just to match the 1 task there is
     TimerOn();
